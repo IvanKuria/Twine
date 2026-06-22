@@ -108,7 +108,12 @@ public struct CityIndex: Sendable {
 
         for dLat in -1...1 {
             for dLon in -1...1 {
-                let key = GridKey(latCell: baseLat + dLat, lonCell: baseLon + dLon)
+                // Wrap longitude cells modulo 360 so antimeridian-adjacent cells are
+                // included (e.g. lon cell 180 maps to -180, cell -181 maps to 179).
+                var rawLon = baseLon + dLon
+                if rawLon >= 180 { rawLon -= 360 }
+                if rawLon < -180 { rawLon += 360 }
+                let key = GridKey(latCell: baseLat + dLat, lonCell: rawLon)
                 guard let indices = grid[key] else { continue }
                 for idx in indices {
                     let d = haversineKilometers(coord, cities[idx].coordinate)

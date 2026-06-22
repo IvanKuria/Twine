@@ -19,8 +19,25 @@ private let fixtureCountries = "FR\tFrance\tEU\nJP\tJapan\tAS\n"
     #expect(r.city.isEmpty)   // no nearby city; country may also be empty
 }
 
-@Test func searchReturnsParisFistForParQuery() {
+@Test func searchReturnsParisFirstForParQuery() {
     let geo = ReverseGeocoder(index: CityIndex(citiesTSV: fixtureCities, countriesTSV: fixtureCountries))
     let results = geo.index.search("par", limit: 10)
     #expect(results.first?.name == "Paris")
+}
+
+// Regression test: CityIndex.nearest(to:) must correctly find cities that sit
+// just across the antimeridian (lon ≈ −179 when queried from lon ≈ +179).
+// Before the fix the neighbor scan produced raw lon cells 180/181 which never
+// matched grid keys stored at −180/−179, so the correct city was silently skipped.
+@Test func nearestCityAcrossAntimeridianIsFound() {
+    // Apia (Samoa-like): lon ≈ −171, well into the western side of the antimeridian.
+    // We place a synthetic city at lon −179.5 and query from lon +179.5 (~1° away).
+    // A far-away decoy city (Paris, lon ≈ +2) must NOT win.
+    let cities = "NearAntimeridian\t-14.0\t-179.5\tWS\t40000\nParis\t48.8566\t2.3522\tFR\t2148000\n"
+    let countries = "WS\tSamoa\tOC\nFR\tFrance\tEU\n"
+    let index = CityIndex(citiesTSV: cities, countriesTSV: countries)
+    // Query from lon +179.5 — only ~1° of longitude from lon −179.5 across the antimeridian.
+    let result = index.nearest(to: .init(latitude: -14.0, longitude: 179.5))
+    #expect(result?.city.name == "NearAntimeridian",
+            "Expected the antimeridian-adjacent city, got: \(result?.city.name ?? "nil")")
 }
