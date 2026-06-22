@@ -31,6 +31,9 @@ struct BoardView: View {
     /// Cached backdrop per size so we don't re-rasterise every frame.
     @State private var backdropCache: (size: CGSize, image: NSImage)? = nil
 
+    /// Accumulated pan offset at the start of each new drag gesture.
+    @State private var dragStart: CGSize = .zero
+
     // MARK: - Body
 
     var body: some View {
@@ -43,11 +46,17 @@ struct BoardView: View {
                 Theme.ocean
                     .ignoresSafeArea()
 
-                // 2. Country backdrop image
-                backdropImage(for: size)
-                    .resizable()
-                    .frame(width: size.width, height: size.height)
-                    .transformEffect(mapTransform(in: size))
+                // 2. Country backdrop image (rendered from cache; placeholder while not ready)
+                Group {
+                    if let cached = backdropCache, cached.size == size {
+                        Image(nsImage: cached.image)
+                            .resizable()
+                    } else {
+                        Theme.ocean
+                    }
+                }
+                .frame(width: size.width, height: size.height)
+                .transformEffect(mapTransform(in: size))
 
                 // 3. Canvas overlay — threads + pins
                 Canvas { ctx, canvasSize in
@@ -68,33 +77,30 @@ struct BoardView: View {
             .clipped()
             .gesture(panGesture())
             .gesture(magnificationGesture())
-            // Regenerate backdrop whenever the container size changes.
+            // Seed backdrop on first appearance and regenerate on resize.
+            .onAppear {
+                Task.detached(priority: .userInitiated) {
+                    let img = MapGeometry.image(
+                        size: size,
+                        fill: Theme.mapFill,
+                        stroke: Theme.mapStroke,
+                        lineWidth: Theme.mapLineWidth
+                    )
+                    await MainActor.run { backdropCache = (size: size, image: img) }
+                }
+            }
             .onChange(of: size) { _, newSize in
-                backdropCache = nil
+                Task.detached(priority: .userInitiated) {
+                    let img = MapGeometry.image(
+                        size: newSize,
+                        fill: Theme.mapFill,
+                        stroke: Theme.mapStroke,
+                        lineWidth: Theme.mapLineWidth
+                    )
+                    await MainActor.run { backdropCache = (size: newSize, image: img) }
+                }
             }
         }
-    }
-
-    // MARK: - Backdrop helper
-
-    private func backdropImage(for size: CGSize) -> Image {
-        let nsImage: NSImage
-        if let cached = backdropCache, cached.size == size {
-            nsImage = cached.image
-        } else {
-            let img = MapGeometry.image(
-                size: size,
-                fill: Theme.mapFill,
-                stroke: Theme.mapStroke,
-                lineWidth: Theme.mapLineWidth
-            )
-            // Update cache on next tick to avoid modifying state mid-render.
-            DispatchQueue.main.async {
-                backdropCache = (size: size, image: img)
-            }
-            nsImage = img
-        }
-        return Image(nsImage: nsImage)
     }
 
     // MARK: - Transform
@@ -190,7 +196,13 @@ struct BoardView: View {
     private func panGesture() -> some Gesture {
         DragGesture()
             .onChanged { value in
-                offset = value.translation
+                offset = CGSize(
+                    width:  dragStart.width  + value.translation.width,
+                    height: dragStart.height + value.translation.height
+                )
+            }
+            .onEnded { _ in
+                dragStart = offset
             }
     }
 
