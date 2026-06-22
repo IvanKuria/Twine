@@ -1,0 +1,22 @@
+name: Twine
+options:
+  bundleIdPrefix: com.ivankuria.twine
+  deploymentTarget: { macOS: "14.0" }
+packages:
+  TwineKit: { path: Packages/TwineKit }
+targets:
+  Twine:
+    type: application
+    platform: macOS
+    sources: [Twine]
+    dependencies:
+      - package: TwineKit
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ivankuria.twine
+        SWIFT_VERSION: "6.0"
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_ENTITLEMENTS: Twine/Resources/Twine.entitlements
+        INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "Twine reads the location and date of your photos to place pins on your map. Photos never leave your Mac."
+        INFOPLIST_KEY_LSApplicationCategoryType: "public.app-category.lifestyle"
+        MARKETING_VERSION: "0.1.0"

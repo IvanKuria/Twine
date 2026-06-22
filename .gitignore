@@ -1,0 +1,15 @@
+# Xcode
+Twine.xcodeproj/
+*.xcuserstate
+DerivedData/
+build/
+
+# macOS
+.DS_Store
+
+# Swift Package Manager
+.build/
+*.resolved
+
+# Superpowers
+.superpowers/
