@@ -10,6 +10,10 @@ struct TwineApp: App {
             RootGate()
         }
         .modelContainer(Store.container())
+
+        Settings {
+            SettingsView()
+        }
     }
 }
 
