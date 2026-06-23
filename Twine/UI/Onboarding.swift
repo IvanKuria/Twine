@@ -9,6 +9,7 @@ struct Onboarding: View {
     let library: PhotoLibrary
     @Bindable var coordinator: ImportCoordinator
     let onFinished: () -> Void
+    var onSkip: () -> Void = {}
 
     @State private var auth: PhotoAuth = .notDetermined
 
@@ -19,13 +20,13 @@ struct Onboarding: View {
 
             switch auth {
             case .notDetermined:
-                NotDeterminedView(library: library, coordinator: coordinator, auth: $auth)
+                NotDeterminedView(library: library, coordinator: coordinator, auth: $auth, onSkip: onSkip)
 
             case .denied:
-                DeniedView()
+                DeniedView(onSkip: onSkip)
 
             case .limited:
-                LimitedView()
+                LimitedView(onSkip: onSkip)
 
             case .full:
                 FullView(coordinator: coordinator)
@@ -51,6 +52,7 @@ private struct NotDeterminedView: View {
     let library: PhotoLibrary
     let coordinator: ImportCoordinator
     @Binding var auth: PhotoAuth
+    let onSkip: () -> Void
 
     var body: some View {
         HeroLayout {
@@ -76,6 +78,11 @@ private struct NotDeterminedView: View {
                     }
                 }
             }
+
+            Button("Add places manually") { onSkip() }
+                .buttonStyle(.plain)
+                .font(.system(size: 13))
+                .foregroundStyle(.secondary)
         }
     }
 }
@@ -83,6 +90,8 @@ private struct NotDeterminedView: View {
 // MARK: - Denied
 
 private struct DeniedView: View {
+    let onSkip: () -> Void
+
     var body: some View {
         HeroLayout {
             Image(systemName: "photo.badge.exclamationmark")
@@ -104,9 +113,10 @@ private struct DeniedView: View {
                 openPhotosPrivacySettings()
             }
 
-            Text("You can also add places manually from the sidebar.")
-                .font(.system(size: 12))
-                .foregroundStyle(.tertiary)
+            Button("Continue without photos") { onSkip() }
+                .buttonStyle(.plain)
+                .font(.system(size: 13))
+                .foregroundStyle(.secondary)
         }
     }
 }
@@ -114,6 +124,8 @@ private struct DeniedView: View {
 // MARK: - Limited
 
 private struct LimitedView: View {
+    let onSkip: () -> Void
+
     var body: some View {
         HeroLayout {
             Image(systemName: "photo.stack")
@@ -134,6 +146,11 @@ private struct LimitedView: View {
             TwineButton(title: "Open System Settings") {
                 openPhotosPrivacySettings()
             }
+
+            Button("Continue without photos") { onSkip() }
+                .buttonStyle(.plain)
+                .font(.system(size: 13))
+                .foregroundStyle(.secondary)
         }
     }
 }
@@ -262,7 +279,7 @@ private struct TwineButton: View {
         library: library,
         modelContext: container.mainContext
     )
-    return Onboarding(library: library, coordinator: coordinator, onFinished: {})
+    return Onboarding(library: library, coordinator: coordinator, onFinished: {}, onSkip: {})
         .frame(width: 520, height: 420)
         .modelContainer(container)
 }

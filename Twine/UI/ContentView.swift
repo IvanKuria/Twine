@@ -100,6 +100,13 @@ struct ContentView: View {
     }
 }
 
+// MARK: - City composite key
+
+private extension City {
+    /// Stable composite identifier used as List row id to avoid collisions on duplicate city names.
+    var compositeKey: String { "\(name)-\(countryCode)-\(coordinate.latitude)-\(coordinate.longitude)" }
+}
+
 // MARK: - SetHomeSheet
 
 private struct SetHomeSheet: View {
@@ -171,7 +178,7 @@ private struct SetHomeSheet: View {
                 }
                 Spacer()
             } else {
-                List(results, id: \.name) { city in
+                List(results, id: \.compositeKey) { city in
                     Button {
                         upsertHome(city)
                     } label: {

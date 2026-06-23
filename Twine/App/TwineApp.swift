@@ -47,7 +47,8 @@ private struct RootGate: View {
                     Onboarding(
                         library: library,
                         coordinator: coord,
-                        onFinished: { onboardingDone = true }
+                        onFinished: { onboardingDone = true },
+                        onSkip: { onboardingDone = true }
                     )
                     .frame(minWidth: 520, minHeight: 420)
                 } else {
