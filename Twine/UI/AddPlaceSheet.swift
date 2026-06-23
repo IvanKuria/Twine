@@ -2,6 +2,13 @@ import SwiftUI
 import SwiftData
 import TwineKit
 
+// MARK: - City extension
+
+private extension City {
+    /// Stable composite identifier to avoid List collisions on duplicate city names.
+    var compositeKey: String { "\(name)-\(countryCode)-\(coordinate.latitude)-\(coordinate.longitude)" }
+}
+
 // MARK: - AddPlaceSheet
 
 struct AddPlaceSheet: View {
@@ -80,26 +87,28 @@ struct AddPlaceSheet: View {
                 }
                 Spacer()
             } else {
-                List(results, id: \.name) { city in
-                    Button {
-                        addPlace(city)
-                    } label: {
-                        HStack(spacing: 4) {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(city.name)
-                                    .font(.body)
-                                    .foregroundStyle(.primary)
-                                Text(city.countryCode)
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
+                List {
+                    ForEach(results, id: \.compositeKey) { city in
+                        Button {
+                            addPlace(city)
+                        } label: {
+                            HStack(spacing: 4) {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(city.name)
+                                        .font(.body)
+                                        .foregroundStyle(.primary)
+                                    Text(city.countryCode)
+                                        .font(.subheadline)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Image(systemName: "plus.circle")
+                                    .foregroundStyle(Theme.pin)
                             }
-                            Spacer()
-                            Image(systemName: "plus.circle")
-                                .foregroundStyle(Theme.pin)
+                            .contentShape(Rectangle())
                         }
-                        .contentShape(Rectangle())
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
                 .listStyle(.plain)
             }

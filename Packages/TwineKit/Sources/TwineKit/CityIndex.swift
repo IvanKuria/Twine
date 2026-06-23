@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - City
 
-public struct City: Sendable, Equatable {
+public struct City: Sendable, Equatable, Hashable {
     public let name: String
     public let coordinate: Coordinate
     public let countryCode: String
