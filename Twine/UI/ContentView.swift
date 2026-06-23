@@ -59,6 +59,10 @@ struct ContentView: View {
         .navigationSplitViewStyle(.balanced)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
+                ExportView(places: places, home: home)
+            }
+
+            ToolbarItem(placement: .primaryAction) {
                 Button {
                     showSetHome = true
                 } label: {
