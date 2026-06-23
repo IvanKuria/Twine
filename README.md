@@ -67,13 +67,13 @@ Click a pin to open the detail view: a photo strip, the date range, visit count,
 
 ```bash
 brew install xcodegen
-git clone https://github.com/IvanKuria/twine.git
+git clone https://github.com/IvanKuria/Twine.git
 cd twine
 xcodegen generate
 open Twine.xcodeproj      # then press Cmd-R
 ```
 
-A notarized DMG is coming on the [Releases page](https://github.com/IvanKuria/twine/releases).
+A notarized DMG is coming on the [Releases page](https://github.com/IvanKuria/Twine/releases).
 
 ## How it works
 
@@ -86,7 +86,7 @@ The map is rendered on a SwiftUI `Canvas` -- not MapKit -- so the poster aesthet
 
 ## Export
 
-Twine can render the board to a high-resolution image file. Animated thread-draw video export is planned for v1.1.
+Twine can render the board to a high-resolution image file.
 
 ## Contributing
 

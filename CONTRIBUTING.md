@@ -10,7 +10,7 @@ Thank you for your interest in contributing. Twine is a native macOS keepsake ap
 
 ```bash
 brew install xcodegen
-git clone https://github.com/IvanKuria/twine.git
+git clone https://github.com/IvanKuria/Twine.git
 cd twine
 xcodegen generate
 open Twine.xcodeproj      # then press Cmd-R
