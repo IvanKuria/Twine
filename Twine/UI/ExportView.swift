@@ -55,13 +55,23 @@ struct PosterView: View {
     }
 
     private var mapArea: some View {
+        // Compute the country backdrop synchronously so ImageRenderer captures it
+        // immediately — no async Task.detached needed on the export path.
+        let backdrop = MapGeometry.image(
+            size: boardSize,
+            fill: Theme.mapFill,
+            stroke: Theme.mapStroke,
+            lineWidth: Theme.mapLineWidth
+        )
+
         // Constant bindings — no interaction needed for a static poster.
-        BoardView(
+        return BoardView(
             places: places,
             home: home,
             selectedPlaceID: .constant(nil),
             scale: .constant(1.0),
-            offset: .constant(.zero)
+            offset: .constant(.zero),
+            backdropOverride: backdrop
         )
         .frame(width: boardSize.width, height: boardSize.height)
         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))

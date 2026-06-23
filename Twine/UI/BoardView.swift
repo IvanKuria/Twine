@@ -26,6 +26,11 @@ struct BoardView: View {
     @Binding var scale: CGFloat
     @Binding var offset: CGSize
 
+    /// When non-nil, this image is used as the country backdrop SYNCHRONOUSLY,
+    /// bypassing the async cache entirely. Used by PosterView so that
+    /// ImageRenderer captures the map before any async work would run.
+    var backdropOverride: NSImage? = nil
+
     // MARK: - Private state
 
     /// Cached backdrop per size so we don't re-rasterise every frame.
@@ -46,9 +51,15 @@ struct BoardView: View {
                 Theme.ocean
                     .ignoresSafeArea()
 
-                // 2. Country backdrop image (rendered from cache; placeholder while not ready)
+                // 2. Country backdrop image.
+                //    When backdropOverride is set (export path), render it synchronously
+                //    so ImageRenderer captures the full map.
+                //    Otherwise fall back to the async cache (interactive path).
                 Group {
-                    if let cached = backdropCache, cached.size == size {
+                    if let override = backdropOverride {
+                        Image(nsImage: override)
+                            .resizable()
+                    } else if let cached = backdropCache, cached.size == size {
                         Image(nsImage: cached.image)
                             .resizable()
                     } else {
@@ -78,7 +89,9 @@ struct BoardView: View {
             .gesture(panGesture())
             .gesture(magnificationGesture())
             // Seed backdrop on first appearance and regenerate on resize.
+            // Skipped entirely when backdropOverride is provided.
             .onAppear {
+                guard backdropOverride == nil else { return }
                 Task.detached(priority: .userInitiated) {
                     let img = MapGeometry.image(
                         size: size,
@@ -90,6 +103,7 @@ struct BoardView: View {
                 }
             }
             .onChange(of: size) { _, newSize in
+                guard backdropOverride == nil else { return }
                 Task.detached(priority: .userInitiated) {
                     let img = MapGeometry.image(
                         size: newSize,
