@@ -22,22 +22,21 @@ final class ThumbnailLoader {
 
         let options = PHImageRequestOptions()
         options.isNetworkAccessAllowed = false
-        options.deliveryMode = .opportunistic
+        options.deliveryMode = .highQualityFormat
         options.resizeMode = .fast
 
         return await withCheckedContinuation { continuation in
+            var didResume = false
             manager.requestImage(
                 for: asset,
                 targetSize: target,
                 contentMode: .aspectFill,
                 options: options
-            ) { image, info in
-                // The completion can fire more than once (opportunistic).
-                // Only resume on the final delivery.
-                let isDegraded = (info?[PHImageResultIsDegradedKey] as? Bool) ?? false
-                if !isDegraded {
-                    continuation.resume(returning: image)
-                }
+            ) { image, _ in
+                // Belt-and-suspenders guard: never resume the continuation twice.
+                guard !didResume else { return }
+                didResume = true
+                continuation.resume(returning: image)
             }
         }
     }
