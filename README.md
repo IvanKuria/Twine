@@ -68,7 +68,7 @@ Click a pin to open the detail view: a photo strip, the date range, visit count,
 ```bash
 brew install xcodegen
 git clone https://github.com/IvanKuria/Twine.git
-cd twine
+cd Twine
 xcodegen generate
 open Twine.xcodeproj      # then press Cmd-R
 ```
