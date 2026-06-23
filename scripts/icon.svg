@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Warm premium squircle background gradient -->
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#F5E6D0"/>
+      <stop offset="100%" stop-color="#D4A96A"/>
+    </linearGradient>
+    <!-- Pin body gradient - warm terra cotta accent -->
+    <linearGradient id="pinGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#C85A3C"/>
+      <stop offset="100%" stop-color="#8B2E14"/>
+    </linearGradient>
+    <!-- Pin shadow for depth -->
+    <radialGradient id="pinShadow" cx="50%" cy="100%" r="30%">
+      <stop offset="0%"   stop-color="#6B1E0A" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#6B1E0A" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Thread gradient - warm muted tone -->
+    <linearGradient id="threadGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#A0745A"/>
+      <stop offset="100%" stop-color="#7A5240"/>
+    </linearGradient>
+    <!-- Clip path for squircle shape -->
+    <clipPath id="squircle">
+      <path d="M512 0
+        C 230 0, 0 230, 0 512
+        C 0 794, 230 1024, 512 1024
+        C 794 1024, 1024 794, 1024 512
+        C 1024 230, 794 0, 512 0 Z"/>
+    </clipPath>
+    <!-- More precise squircle using superellipse approximation -->
+    <clipPath id="squircle2">
+      <path d="
+        M 512 48
+        C 700 48, 810 48, 893 131
+        C 976 214, 976 324, 976 512
+        C 976 700, 976 810, 893 893
+        C 810 976, 700 976, 512 976
+        C 324 976, 214 976, 131 893
+        C 48 810, 48 700, 48 512
+        C 48 324, 48 214, 131 131
+        C 214 48, 324 48, 512 48 Z
+      "/>
+    </clipPath>
+  </defs>
+
+  <!-- Squircle background -->
+  <g clip-path="url(#squircle2)">
+    <rect width="1024" height="1024" fill="url(#bg)"/>
+
+    <!-- Subtle paper texture overlay -->
+    <rect width="1024" height="1024" fill="#F0D8B0" opacity="0.18"/>
+
+    <!-- Delicate map grid lines (very subtle) -->
+    <g stroke="#C4955A" stroke-width="1.2" opacity="0.15">
+      <!-- Horizontal lines -->
+      <line x1="48" y1="256" x2="976" y2="256"/>
+      <line x1="48" y1="384" x2="976" y2="384"/>
+      <line x1="48" y1="512" x2="976" y2="512"/>
+      <line x1="48" y1="640" x2="976" y2="640"/>
+      <line x1="48" y1="768" x2="976" y2="768"/>
+      <!-- Vertical lines -->
+      <line x1="256" y1="48" x2="256" y2="976"/>
+      <line x1="384" y1="48" x2="384" y2="976"/>
+      <line x1="512" y1="48" x2="512" y2="976"/>
+      <line x1="640" y1="48" x2="640" y2="976"/>
+      <line x1="768" y1="48" x2="768" y2="976"/>
+    </g>
+
+    <!-- Thread: a graceful curved path connecting two small pin dots -->
+    <!-- First anchor pin (small, secondary) -->
+    <circle cx="248" cy="680" r="18" fill="#8B2E14" opacity="0.75"/>
+    <circle cx="248" cy="680" r="10" fill="#C85A3C" opacity="0.9"/>
+
+    <!-- Second anchor pin (small, secondary) -->
+    <circle cx="760" cy="340" r="18" fill="#8B2E14" opacity="0.75"/>
+    <circle cx="760" cy="340" r="10" fill="#C85A3C" opacity="0.9"/>
+
+    <!-- Thread path: flows from left pin, loops near main pin, ends at right pin -->
+    <path d="
+      M 248 680
+      C 310 620, 380 560, 450 530
+      C 480 518, 500 510, 512 510
+      C 524 510, 544 518, 580 530
+      C 660 560, 720 420, 760 340
+    "
+    fill="none"
+    stroke="url(#threadGrad)"
+    stroke-width="8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    opacity="0.7"/>
+
+    <!-- Small thread loop around main pin needle -->
+    <path d="
+      M 490 510
+      C 480 490, 470 465, 490 455
+      C 510 445, 540 455, 540 475
+      C 540 495, 525 510, 512 510
+    "
+    fill="none"
+    stroke="#8B4A2A"
+    stroke-width="7"
+    stroke-linecap="round"
+    opacity="0.55"/>
+
+    <!-- ===== Main location pin ===== -->
+    <!-- Drop shadow under pin -->
+    <ellipse cx="512" cy="688" rx="72" ry="20" fill="#5A1E08" opacity="0.22"/>
+
+    <!-- Pin body: teardrop shape pointing down -->
+    <!-- The pin head (circle) centered around 512, 370 -->
+    <!-- Pin tail narrows to a point at 512, 678 -->
+    <path d="
+      M 512 678
+      C 490 640, 430 600, 410 540
+      C 388 476, 400 404, 440 362
+      C 460 340, 484 328, 512 328
+      C 540 328, 564 340, 584 362
+      C 624 404, 636 476, 614 540
+      C 594 600, 534 640, 512 678 Z
+    "
+    fill="url(#pinGrad)"/>
+
+    <!-- Pin highlight: inner lighter arc for 3D effect -->
+    <path d="
+      M 468 378
+      C 448 400, 440 432, 445 464
+      C 450 490, 462 512, 480 528
+    "
+    fill="none"
+    stroke="#E87050"
+    stroke-width="12"
+    stroke-linecap="round"
+    opacity="0.45"/>
+
+    <!-- Pin circle hole (inner circle) - parchment color -->
+    <circle cx="512" cy="435" r="72" fill="#F5E0C0"/>
+    <circle cx="512" cy="435" r="52" fill="#EDD4A8"/>
+
+    <!-- Inner circle subtle shadow ring -->
+    <circle cx="512" cy="435" r="72" fill="none" stroke="#C07040" stroke-width="3" opacity="0.35"/>
+
+    <!-- Thread hole accent: tiny dot at center of pin circle -->
+    <circle cx="512" cy="435" r="12" fill="#C07040" opacity="0.6"/>
+
+  </g>
+</svg>
